@@ -1,3 +1,4 @@
+using countBy.Models;
 using CountBy.Data;
 using CountBy.Models;
 using CountBy.Services;
@@ -32,5 +33,21 @@ public class ProductReadService(AppDbContext context) : IProductReadService
                 CategoryId = p.CategoryId
             })
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<IReadOnlyCollection<CategoryDTO>> GetCategoryInfoAsync()
+    {
+        var products = await context.Products.AsNoTracking().
+                       ToListAsync();
+        var productsByCategory = products.CountBy(p =>
+            p.CategoryId).OrderBy(x => x.Key);
+
+
+        return productsByCategory.Select(categoryGroup => new
+        CategoryDTO
+        {
+            CategoryId = categoryGroup.Key,
+            ProductCount = categoryGroup.Value
+        }).ToList();
     }
 }

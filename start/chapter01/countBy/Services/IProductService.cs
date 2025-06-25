@@ -1,9 +1,10 @@
-using countBy.Models;
+﻿using countBy.Models;
 using CountBy.Models;
-namespace CountBy.Services;
 
-public interface IProductReadService {
+namespace countBy.Services;
+
+public interface IProductService
+{
     Task<IEnumerable<ProductDTO>> GetAllProductsAsync();
-    Task<ProductDTO?> GetAProductAsync(int id);
     Task<IReadOnlyCollection<CategoryDTO>> GetCategoryInfoAsync();
 }

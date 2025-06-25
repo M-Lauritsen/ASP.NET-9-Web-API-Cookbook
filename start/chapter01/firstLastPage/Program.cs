@@ -11,6 +11,7 @@ var connection = new SqliteConnection("DataSource=:memory:");
 connection.Open();
 
 builder.Services.AddControllers();
+builder.Services.AddMemoryCache();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseSqlite(connection));

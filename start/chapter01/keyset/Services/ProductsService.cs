@@ -1,6 +1,7 @@
 using cookbook.Data;
 using cookbook.Models;
 using cookbook.Services;
+using keyset.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class ProductReadService : IProductsService
@@ -24,5 +25,35 @@ public class ProductReadService : IProductsService
                 CategoryId = p.CategoryId
             })
             .ToListAsync();
+    }
+
+    public async Task<PagedProdectResponseDTO> GetPagedProductsAsync(int pageSize, int? lastProductId = null)
+    {
+        var query = _context.Products.AsQueryable();
+        if (lastProductId.HasValue)
+        {
+            query = query.Where(p => p.Id == lastProductId.Value);
+        }
+        var pagedProducts = await query.OrderBy(p => p.Id)
+                .Take(pageSize)
+                .Select(p => new ProductDTO
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    CategoryId = p.CategoryId
+                })
+                .ToListAsync();
+        var lastId = pagedProducts.LastOrDefault()?.Id;
+        var hasNextPage = await _context.Products.AnyAsync(p => p.Id > lastId);
+
+        var result = new PagedProdectResponseDTO
+        {
+            Items = pagedProducts.Any() ? pagedProducts : Array.Empty<ProductDTO>(),
+            PageSize = pageSize,
+            HasNextPage = hasNextPage,
+            HasPreviousPage = lastProductId.HasValue,
+        };
+        return result;
     }
 }

@@ -56,4 +56,29 @@ public class EFCoreService(IEFCoreRepository repository) : IEFCoreService
             DaysAttending = eventRegistration.DaysAttending,
         };
     }
+
+    public async Task<EventRegistrationDTO> CreateEventRegistrationAsync(EventRegistrationDTO eventRegistrationDTO)
+    {
+        var eventRegistration = new EventRegistration
+        {
+            FullName = eventRegistrationDTO.FullName,
+            Email = eventRegistrationDTO.Email,
+            EventName = eventRegistrationDTO.EventName,
+            EventDate = eventRegistrationDTO.EventDate,
+            DaysAttending = eventRegistrationDTO.DaysAttending
+        };
+
+        var result = await repository.CreateEventRegistrationAsync(eventRegistration);
+
+        return new EventRegistrationDTO
+        {
+            Id = result.Id,
+            FullName = result.FullName,
+            Email = result.Email,
+            EventName = result.EventName,
+            EventDate = result.EventDate,
+            DaysAttending = result.DaysAttending,
+            ConfirmEmail = result.Email,
+        };
+    }
 }

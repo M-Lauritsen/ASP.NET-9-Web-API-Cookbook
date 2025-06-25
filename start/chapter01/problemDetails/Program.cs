@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Bogus;
 using ProblemDetailsDemo.Services;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,31 @@ var connection = new SqliteConnection("DataSource=:memory:");
 connection.Open();
 
 builder.Services.AddControllers();
+
+builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = (context) =>
+{
+    var httpContext = context.HttpContext;
+    context.ProblemDetails.Extensions["traceID"] = Activity.Current?.Id ?? httpContext.TraceIdentifier;
+    context.ProblemDetails.Extensions["suppport"] = "support@example.com";
+
+    if(context.ProblemDetails.Status == StatusCodes.Status401Unauthorized)
+    {
+        context.ProblemDetails.Title = "Unauthorized Access";
+        context.ProblemDetails.Detail = "You are not authorized to access this resource";
+}
+    else if (context.ProblemDetails.Status == StatusCodes.
+             Status404NotFound)
+    {
+        context.ProblemDetails.Title = "Resource Not Found";
+        context.ProblemDetails.Detail = "The resource you are looking for was not found.";
+            }
+    else
+    {
+        context.ProblemDetails.Title = "An unexpected error occurred";
+                context.ProblemDetails.Detail = "An unexpected error occurred.Please try again later.";
+    }
+});
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options => 

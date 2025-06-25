@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FluentValidation.Models;
 
-public class EventRegistrationDTO
+public class EventRegistrationDTO : IValidatableObject
 {
     public int Id { get; set; }
 
@@ -28,4 +28,21 @@ public class EventRegistrationDTO
     [Required]
     [Range(1, 7, ErrorMessage = "Number of days attending must be between 1 and 7.")]
     public int DaysAttending { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if(EventDate < DateTime.Now)
+        {
+            yield return new ValidationResult(
+                "Event date must be in the future",
+                [nameof(EventDate)]);
+        }
+
+        if((FullName.Contains("Garry") || FullName.Contains("Luke")) && EventName == "C# Conference")
+        {
+            yield return new ValidationResult(
+                $"{FullName} is banned from {EventName}.",
+                [nameof(FullName), nameof(EventName)]);
+        }
+    }
 }

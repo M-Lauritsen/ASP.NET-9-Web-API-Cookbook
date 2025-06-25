@@ -30,4 +30,11 @@ public class EFCoreRepository : IEFCoreRepository
     {
         return await _context.EventRegistrations.FindAsync(id);
     }
+
+    public async Task<EventRegistration> CreateEventRegistrationAsync(EventRegistration eventRegistration)
+    {
+        _context.EventRegistrations.Add(eventRegistration);
+        await _context.SaveChangesAsync();
+        return eventRegistration;
+    }
 }

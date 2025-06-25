@@ -62,7 +62,8 @@ public class ProductsController(IProductReadService productService, ILogger<Prod
             HasPreviousPage = pagedResult.HasPreviousPage,
             HasNextPage = pagedResult.HasNextPage,
             PreviousPageUrl = previousPageUrl,
-            NextPageUrl = nextPageUrl
+            NextPageUrl = nextPageUrl,
+            AveragePricePerCategory = pagedResult.AveragePricePerCategory
         };
 
         var options = new JsonSerializerOptions

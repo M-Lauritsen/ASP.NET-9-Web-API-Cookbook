@@ -1,6 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
+using countBy.Models;
+using countBy.Services;
 using CountBy.Models;
 using CountBy.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CountBy.Controllers;
 
@@ -10,28 +12,28 @@ public class ProductsController(IProductReadService productReadService, ILogger<
 {
     // GET: /Products
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductDTO>))] 
-    [ProducesResponseType(StatusCodes.Status204NoContent)] 
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductDTO>))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAllProducts()
+    public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAllProducts()
+    {
+        logger.LogInformation("Retrieving all products");
+
+        try
         {
-            logger.LogInformation("Retrieving all products");
+            var products = await productReadService.GetAllProductsAsync();
 
-            try 
-            {
-                var products = await productReadService.GetAllProductsAsync();
+            if (!products.Any())
+                return NoContent();
 
-                if (!products.Any())
-                    return NoContent();
-
-                return Ok(products);
-            } 
-            catch (Exception ex) 
-            {
-                logger.LogError(ex, "An error occurred while retrieving all products");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return Ok(products);
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while retrieving all products");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 
     // GET: /Products/1
     [HttpGet("{id}")]
@@ -39,7 +41,7 @@ public class ProductsController(IProductReadService productReadService, ILogger<
     {
         logger.LogInformation($"Retrieving product with id {id}");
 
-        try 
+        try
         {
             var product = await productReadService.GetAProductAsync(id);
 
@@ -47,11 +49,34 @@ public class ProductsController(IProductReadService productReadService, ILogger<
                 return NotFound();
 
             return Ok(product);
-        } 
-        catch (Exception ex) 
+        }
+        catch (Exception ex)
         {
             logger.LogError(ex, $"An error occurred while retrieving product with id {id}");
             return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    // GET: /Products/CategoryInfo
+    [HttpGet("CategoryInfo")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CategoryDTO>))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoryInfo()
+    {
+        logger.LogInformation("Retrieving Category Info");
+        try
+        {
+            var products = await productReadService.GetCategoryInfoAsync();
+            if (!products.Any())
+                return NoContent();
+            return Ok(products);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while retrieving all products");
+            return StatusCode(StatusCodes.
+       Status500InternalServerError);
         }
     }
 }

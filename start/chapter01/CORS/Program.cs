@@ -17,6 +17,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     
 builder.Services.AddScoped<IProductReadService, ProductReadService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    builder.AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .WithExposedHeaders("X-Pagination"));
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -35,6 +44,8 @@ using (var scope = app.Services.CreateScope())
         context.SaveChanges();
     }
 }
+
+app.UseCors("CorsPolicy");
 
 app.MapControllers();
 app.MapOpenApi();

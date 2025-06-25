@@ -1,6 +1,20 @@
+@CustomAnnotations_HostAddress = https://localhost:7070
 @scalarSQLite_HostAddress = http://localhost:5287
 
 GET {{scalarSQLite_HostAddress}}/weatherforecast/
 Accept: application/json
+
+###
+
+GET {{CustomAnnotations_HostAddress}}/api/dapper/dapperevents
+
+###
+
+POST {{scalarSQLite_HostAddress}}/api/efevents
+Content-Type: application/json
+
+{
+  //EventRegistrationDTO
+}
 
 ###

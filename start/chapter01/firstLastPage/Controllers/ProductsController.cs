@@ -62,7 +62,9 @@ public class ProductsController(IProductReadService productReadService, ILogger<
             HasPreviousPage = pagedResult.HasPreviousPage,
             HasNextPage = pagedResult.HasNextPage,
             PreviousPageUrl = previousPageUrl,
-            NextPageUrl = nextPageUrl
+            NextPageUrl = nextPageUrl,
+            FirstPageUrl = Url.Action("GetProducts", new {pageSize}),
+            LastPageUrl = Url.Action("GetProducts", new {pageSize, lastProductId = (pagedResult.TotalPages - 1) *  pageSize})
         };
 
         var options = new JsonSerializerOptions

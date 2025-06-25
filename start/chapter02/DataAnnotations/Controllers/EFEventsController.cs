@@ -76,4 +76,19 @@ public class EFEventsController(IEFCoreService service, ILogger<EFEventsControll
         }
     }
 
+    [HttpPost]
+    [EndpointSummary("Create a new event registration")]
+    [EndpointDescription("POST to create a new event registration. Accepts a EventRegistrationDTO.")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> PostEventRegistration([FromBody] EventRegistrationDTO eventRegistrationDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var createdEvent = await service.CreateEventRegistrationAsync(eventRegistrationDTO);
+        return CreatedAtAction(nameof(GetEventRegistrationById), new { id = createdEvent.Id }, createdEvent);
+    }
+
 }

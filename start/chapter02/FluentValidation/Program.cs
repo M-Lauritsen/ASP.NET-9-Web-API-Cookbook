@@ -7,6 +7,8 @@ using FluentExample.Data;
 using FluentExample.Services;
 using FluentExample.Repositories;
 using Dapper;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<EventRegistrationDTOValidator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi("chapter2");
 
